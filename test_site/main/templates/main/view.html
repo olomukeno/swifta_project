@@ -1,0 +1,70 @@
+{% extends 'main/base.html' %}
+
+{% block title %}View{% endblock %}
+
+{% block content %}
+{% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{ message }}
+    </div>
+{% endfor %}
+{% if user.is_authenticated %}
+    <h1 class="mt-2">My List</h1>
+    <hr class="mt-0 mb-4">
+    <form method="post" action="#">
+        {% csrf_token %}
+        {% for td in user.todolist.all %}
+            <p>{{td.list_complete}}</p>
+            {% if td.list_complete == True %}
+                <h3>{{td.name}} Complete <input type="checkbox" value="clicked" name="check{{td.name}}" style="width: 22px;height: 22px;" disabled="disabled" checked></h3><h5>Created: {{td.time}}</h5>
+            {% else %}
+                <h3>{{td.name}} <input type="checkbox" value="clicked" name="check{{td.name}}" style="width: 22px;height: 22px;" disabled="disabled"></h3><h5>Created: {{td.time}}</h5>
+            {% endif %}
+        <p><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#Example{{td.id}}" aria-expanded="false" aria-controls="Example{{td.id}}">View</button>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#Example2{{td.id}}" aria-expanded="false" aria-controls="Example{{td.id}}">Add</button></p>
+        <div class="row">
+                <div class="col">
+                    <div class="collapse" id="Example{{td.id}}">
+            <div class="card card-body">
+                {% for it in td.item_set.all %}
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <input type="text" value="{{it.text}}" name="text{{it.id}}" class="form-control">
+                                <div class="input-group-text">
+                                    {% if it.completed == True %}
+                                        <input type="checkbox" value="clicked" name="check{{it.id}}" checked>
+                                    {% else %}
+                                        <input type="checkbox" value="clicked" name="check{{it.id}}">
+                                    {% endif %}
+                                </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            <button type="submit" name="save{{td.name}}" value="save{{td.name}}" class="btn btn-success">Save</button>
+            </div>
+            </div>
+                </div>
+                <div class="col">
+                    <div class="collapse" id="Example2{{td.id}}">
+                        <div class="card card-body">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button type="submit" , name="addItem{{td.name}}" , value="addItem{{td.name}}" class="btn btn-success">Add Item</button>
+                                </div>
+                                <input type="text" , name="Item{{td.name}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <br>
+    {% endfor %}
+
+    </form>
+{% else %}
+    <script>if(confirm("User not logged in!")){location.replace("/login/")}</script>
+{% endif %}
+{% endblock %}

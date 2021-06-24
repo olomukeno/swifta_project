@@ -1,0 +1,79 @@
+{% extends 'main/base.html' %}
+
+{% block title %}View{% endblock %}
+
+{% block content %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% if user.is_authenticated %}
+        <h1 class="mt-2">My List</h1>
+        <hr class="mt-0 mb-4">
+        <form method="post" action="#">
+            {% csrf_token %}
+            {% for td in user.todolist.all %}
+                <h3>{{td}} <input type="checkbox" value="mainclicked" name="check{{td.name}}" style="width: 22px;height: 22px;"></h3><h5>Created: {{td.time}}</h5>
+                <p><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample{{td.id}}" aria-expanded="false" aria-controls="collapseExample{{td.id}}">View</button>
+                <button class="btn btn-danger" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2{{td.id}}" aria-expanded="false" aria-controls="collapseExample{{td.id}}">Delete</button></p>
+                <div class="row">
+                    <div class="col">
+                        <div class="collapse" id="collapseExample{{td.id}}">
+                            <div class="card card-body">
+                                {% for it in td.item_set.all %}
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <input type="text" value="{{it.text}}" name="text{{it.id}}" disabled="disabled" class="form-control">
+                                            <div class="input-group-text">
+                                                <input type="checkbox" value="clicked" name="{{it.id}}check{{td.name}}">
+                                            </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="collapse" id="collapseExample2{{td.id}}">
+                            <div class="card card-body">
+                                <p>Delete selected items?</p>
+                                <button type="submit" , name="delItem{{td.name}}" , value="delItem{{td.name}}" class="btn btn-warning">Yes 😀</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            {% endfor %}
+        </form>
+    <script>
+        document.body.addEventListener('change', function(e){
+            var collection = document.getElementsByTagName("input");
+            var list_name = [];
+            for(var i = 0; i < collection.length; i++) {
+                if(collection[i].value == 'mainclicked') {
+                    list_name.push(collection[i]);
+                    console.log(list_name);
+                }
+            }
+            var target = e.target;
+            for(var j = 0; j < list_name.length; j++) {
+                if(list_name[j].name == target.name) {
+                    var bool = list_name[j].checked;
+                    console.log(bool);
+                    for(var i = 0; i < collection.length; i++) {
+                        if(collection[i].name.endsWith(target.name)) {
+                            document.getElementsByName(collection[i].name)[0].checked = bool;
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    {% else %}
+        <script>if(confirm("User not logged in!")){location.replace("/login/")}</script>
+    {% endif %}
+{% endblock %}

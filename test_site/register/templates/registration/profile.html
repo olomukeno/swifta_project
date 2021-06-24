@@ -1,0 +1,182 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+{% if user.is_authenticated %}
+<style>
+    .asteriskField {
+    display: none;
+}
+</style>
+<h1 class="mt-2">My List</h1>
+<hr class="mt-0 mb-4">
+<main class="content">
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if uploaded_file_url %}
+    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+  {% endif %}
+            <div class="row">
+                <div class="col-12 col-xl-8">
+                    <div class="card card-body bg-white border-light shadow-sm mb-4">
+                        <h2 class="h2 mb-4">Profile information</h2>
+                        <div class="row">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">First Name</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ profile.first_name }}
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="col-sm-4">
+                                        <h6 class="mb-0">Second Name</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ profile.last_name }}
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Birthday</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ profile.birthday }}
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Gender</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        {{ profile.get_gender_display }}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#profile" aria-expanded="false" aria-controls="profile">Edit</button></p>
+                    <div class="collapse" id="profile">
+                    <div class="card card-body bg-white border-light shadow-sm mb-4">
+                        <h2 class="h5 mb-4">Edit Info</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="first_name">First Name</label>
+                                    <input name="first_name" class="form-control" id="first_name" type="text"
+                                           placeholder="First name" value="{{ profile.first_name }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="last_name">Last Name</label>
+                                    <input name="last_name" class="form-control" id="last_name" type="text"
+                                           placeholder="Last name" value="{{ profile.last_name }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <label for="birthday">Birthday</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                    <input name="birthday"
+                                           data-datepicker="{{ user.profile.birthday|date:'m/d/Y' }}"
+                                           class="form-control" id="birthday" type="date">
+<!--                                    <p>{{ user.profile.birthday|date:"m/d/Y" }}</p>-->
+<!--                                    <p>{{ user.profile.gender }}</p>-->
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender">Gender</label>
+                                <select name="gender" class="form-select mb-0" id="gender"
+                                        aria-label="Gender select example">
+                                    <option selected>Gender</option>
+                                    {% for key, val in profile.GENDER_CHOICES %}
+                                        <option value="{{ key }}">{{ val }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input name="email" class="form-control" id="email" type="email"
+                                           placeholder="name@company.com" value="{{ user.email }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="h5 my-4">Select Photo</h2>
+                        <div class="row">
+                            <div class="d-xl-flex align-items-center">
+                                    <div class="file-field">
+                                        <div class="d-flex justify-content-xl-center ml-xl-3">
+                                            <div class="d-flex">
+                                                <span class="icon icon-md">
+                                                    <span class="fa fa-paperclip fa-lg mr-2"></span>
+                                                </span>
+                                                <input name="avatar" type="file" value="avatar">
+<!--                                                {{form|crispy}}-->
+<!--                                                <button type="submit" class="btn btn-primary" name="picture" value="picture">Upload</button>-->
+                                                <div class="d-md-block text-left">
+<!--                                                    <div class="font-weight-normal text-dark mb-1">Choose Image</div>-->
+                                                    <div class="text-gray small">JPG, GIF or PNG. Max size of 800K</div>
+<!--                                                    <button type="submit">Upload</button>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary" name="update" value="update">Update</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-12 col-xl-4">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card border-light text-center p-0">
+<!--                                <div class="profile-cover rounded-top"-->
+<!--                                     data-background="/media/profiles/Cover.jpg"></div>-->
+                                <div class="card-body pb-5">
+                                    {% if profile.avatar %}
+                                        <img src="{{ profile.avatar.url }}"
+                                         class="user-avatar large-avatar rounded-circle mx-auto mt-n7 mb-4"
+                                         alt="Neil Portrait"
+                                         width="200" height="200">
+                                    {% else %}
+                                        <img src="/media/profile/default-image.jpg"
+                                         class="user-avatar large-avatar rounded-circle mx-auto mt-n7 mb-4"
+                                         alt="Neil Default"
+                                         width="200" height="200">
+                                    {% endif %}
+                                    <h4 class="h3" name="username">{{ user.username }}</h4>
+                                    <h4 class="font-weight-normal">{{ profile.get_full_name }}</h4>
+                                    <h5 class="font-weight-normal">{{ user.email }}</h5>
+<!--                                    <p class="text-gray mb-4">{{ profile.address|default:'' }}</p>-->
+<!--                                    <a class="btn btn-sm btn-primary mr-2" href="#"><span-->
+<!--                                            class="fa fa-user-plus mr-1"></span> Connect</a>-->
+<!--                                    <a class="btn btn-sm btn-secondary" href="#">Send Message</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+{% else %}
+    <script>if(confirm("User not logged in!")){location.replace("/login/")}</script>
+{% endif %}
+{% endblock%}

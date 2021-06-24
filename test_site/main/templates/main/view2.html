@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block title %}View{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+        <h1 class="mt-2">My List</h1>
+        <hr class="mt-0 mb-4">
+        {% for td in user.todolist.all %}
+            <p><a href="/{{td.id}}">{{td.name}}</a></p>
+        {% endfor %}
+{% else %}
+    <script>if(confirm("User not logged in!")){location.replace("/login/")}</script>
+{% endif %}
+{% endblock %}
